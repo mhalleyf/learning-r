@@ -1,5 +1,4 @@
-# -------------------- Learn R starts here -----------------------------------------
-
+# Learn R starts here
 # -------------------- Basic math functions ----------------------------------------
 add <- 2 + 2 # adds two numeric values and stores in variable add
 equations <- 1 + 2 / 3 * 4 # computes equation (PEMDAS) and stores answer to equation 
@@ -12,6 +11,7 @@ cei <- ceiling(pi) # rounds up to the nearest whole number
 quot <- 25 %% 4 # divides numeric value by another numeric value but returns the remainder
 evens <- 2 %% 2 # quotients are helpful to determine evens (returns 0)
 odds <- 3 %% 2 # quotients are helpful to determine odds (returns 1)
+
 
 # -------------------- Data type handling in R ------------------------------------
 a <- 1
@@ -30,6 +30,7 @@ class(e) # returns the data type of e (logical)
 
 ls() # lists variables currently in the R environments memory
 
+
 # -------------------- Vectors ----------------------------------------------------
 # Can only store values of the same datatype 
 ht <- c(165, 170, 175, 180, 185) # the c() function concatenates values
@@ -44,6 +45,7 @@ length(wt) # returns the length of the vector or a count of elements
 wt[c(1, length(wt))] # returns the 1st and nth element of the vector
 wt[1:length(wt)] # returns the 1st to the nth element (all elements) of the vector
 
+
 # -------------------- Set WD and perform basic file management -------------------
 wd <- setwd("~/R Projects/learning-r") # set the working directory
 dir(wd)
@@ -53,7 +55,11 @@ fpath <-file.path("~/R Projects/learning-r", "myFile.txt") # assign a path and f
 file.create(fpath) # an alternative method to the above example creating myFile.txt
 save.image("learning-r.RData") # Save workspace so you can take off from where you left off
 load("learning-r.RData") # Load a pre-saved workspace avoiding the need to re-run code
-rm(list=ls()) # Remove workspace
+rm(list=ls()) # Remove all elements from the R environment
+
+
+# -------------------- Ways to generate data within vectors in R ------------------
+
 
 
 
