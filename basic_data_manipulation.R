@@ -262,6 +262,39 @@ names(group_desc) <- c("min", "max", "mean") # rename the variables in the group
 # what we've done here is generate a group size of 30 people with ages from 10 to 40 randomly from a uniform distribution
 # now we can check who can watch the movie (if they're over 18) and who can't
 
+any(group_age < 18) # returns a single TRUE / FALSE if condition is met
+if(any(group_age < 18)){
+  print("Cannot watch the movie")
+} else {
+  print("Can watch the movie")
+}
+
+# IMPORTANT - this if statement returns a warning that only the 1st element of the group will be used. 
+# a FOR statement loop is required or the IFELSE statement
+if(group_age >= 18){
+  print("Can watch the movie")
+} else {
+  print("Cannot watch the movie")
+} # all this tell me is that the first element of the group_age is >= 18
+
+
+# IFELSE can handle vectors i.e. the example above repeated in this functions
+age_check <- ifelse(group_age >=18, "Can watch the movie", "Cannot watch the movie") # Returns a boolean for each element
+
+# ------------------- Introduction to loops (for each element in a vector) - slow --------------------
+loop <- 1:15
+total <- 1
+
+# for loop basics - print a loop of 1 to loop length (15 as defined above)
+for(i in loop){
+  print(i)
+} # prints i as the nth iteration of the loop
+
+for(i in loop){
+  total <- total * i
+  print(total)
+}
+
 
 
 
