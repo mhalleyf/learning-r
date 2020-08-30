@@ -38,6 +38,16 @@ class(ht) # returns the data type of ht which is numeric
 ht[3] # syntax to access the 3rd element of the vector or 175
 ht[c(3,5)] # syntax to access the 3rd and 5th element of the vector
 
+# Access the 1st and nth element of a vector
+wt <- c(50, 51, 54, 57, 60, 66, 68, 68, 70, 72, 75, 76, 78, 80, 83, 84)
+length(wt) # returns the length of the vector or a count of elements
+wt[c(1, length(wt))] # returns the 1st and nth element of the vector
+wt[1:length(wt)] # returns the 1st to the nth element (all elements) of the vector
+
+
+
+
+
 
 
 
