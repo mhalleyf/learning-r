@@ -59,6 +59,23 @@ rm(list=ls()) # Remove all elements from the R environment
 
 
 # -------------------- Ways to generate data within vectors in R ------------------
+v <- 1:10 # generates a vector from 1 to 10 with 10 elements
+v <- 9:0  # generates a vector from 9 to 0 with 10 elements
+s <- seq(0, 20, by = 2) # generates a vector from 0 to 20 (inclusive) counting by 2
+s <- seq(1, 20, by = 2)   # generates a vector from 1 to 19 (inclusive) counting by 2 therefore only odd numbers
+s <- seq(0, 50, by = pi)  # generates a vector from 0 to 50 (inclusive) counting by pi
+sv <- c(v, s)             # adds v from 1:10 followed by seq s counting by pi
+r <- rep(1:2, 10)         # repeats 1 and 2, 10 times
+r <- rep(c(1,2,3), each=3) # repeats 1, 2, 3 three times each
+r <- rep(1:4, 1:4)             # repeats 1 once, 2 twice, 3 trice, 4 four times
+
+# challenge - create a vector 1,1,1,2,2,3,4,4,4,4 using functions that is the fastest for base R code
+v1 <- microbenchmark({rep(1:4, times = c(3, 2, 1, 4))}, times = 10) # best single function approach (2.478ms)
+v2 <- microbenchmark({c(rep(1:3, 3:1), rep(4, times=4))}, times = 10) # best two function approach (3.356ms)
+
+
+
+
 
 
 
