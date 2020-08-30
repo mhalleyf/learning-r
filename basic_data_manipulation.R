@@ -72,13 +72,36 @@ r <- rep(1:4, 1:4)             # repeats 1 once, 2 twice, 3 trice, 4 four times
 # challenge - create a vector 1,1,1,2,2,3,4,4,4,4 using functions that is the fastest for base R code
 v1 <- microbenchmark({rep(1:4, times = c(3, 2, 1, 4))}, times = 10) # best single function approach (2.478ms)
 v2 <- microbenchmark({c(rep(1:3, 3:1), rep(4, times=4))}, times = 10) # best two function approach (3.356ms)
+v3 <- rep(seq(1,10, by=2), times=3) # repeat 1 to 10 by twos, three times
 
 
+# -------------------- Random numbers --------------------------------------------
+set.seed(123) # allows replication of same randomly generated values
+rand_uniform <- runif(10) # random uniform function returning 10 random values
+rand_uniform <- runif(10, min=1, max=100) # return random uniform numbers between a specified range
+rand_poisson <- rpois(n = 100, lambda = 3) # returns a random poisson distrubution
+rand_norm <- rnorm(100, 0, 1) # returns a random normal distribution
+hist(rand_norm) # check visually by passing to the hist() plot function in base R
+hist(rand_poisson) # check visually by passing to the hist() plot function in base R
+rand_uniform <- round(runif(100, min=10, max=1000)) # Return random values between 10 and 1000 rounded (expected mean of ~500)
+hist(rand_uniform, col="blue")  # generates a histogram/bar graph of randomly generated values
+mean(rand_uniform) # returns the mean
+alphabet <- letters[round(runif(10, min=1, max=26))] # calls the letters function which contains the alphbet (random 10 letters)
 
 
+# -------------------- Removing values and cleaning data -------------------------
+l <- rep(seq(1, 5), times=2) # generate a list between 1 and 5 twice creating 10 objects
+l[10] <- NA # Replace the 10th element with NA
 
-
-
-
+# Search lists for missing values 
+is.na(l) # bool check returns TRUE if NA
+!is.na(l) # bool check returns FALSE if NA
+l[is.na(l)] # returns the value if NA - useless but... 
+l[!is.na(l)] # returns the value if not NA - VERY USEFUL
+l <- na.omit(l) # omits the na value from the vector l and passes subset to l (overiding original var)
+l == 1 # conditional check of values that equal 1 without overriding the variable.
+l[l == 1] # returns all values == to 1 in vector, however be careful NA is included 
+l[!l == 1] # returns all values != to 1 in vector, however be careful NA is also included 
+l[l %in% c(1,3)] # returns all values == to 1 and 3 but not NAs
 
 
