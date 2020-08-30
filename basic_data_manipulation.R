@@ -41,4 +41,3 @@ ht[c(3,5)] # syntax to access the 3rd and 5th element of the vector
 
 
 
-
