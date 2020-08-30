@@ -1,6 +1,6 @@
 get_today <- function() { 
   return(Sys.Date())
-} # a function that returns the system date (comment from GitHub test)
+} # a function that returns the system date
 
 # -------------------- Learn R starts here -------------------
 # basic math functions
