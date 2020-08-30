@@ -103,5 +103,165 @@ l == 1 # conditional check of values that equal 1 without overriding the variabl
 l[l == 1] # returns all values == to 1 in vector, however be careful NA is included 
 l[!l == 1] # returns all values != to 1 in vector, however be careful NA is also included 
 l[l %in% c(1,3)] # returns all values == to 1 and 3 but not NAs
+l <- l[!is.na(l)] # remove NA values
+l <- l[!(l %% 2 == 0)] # modulus for each value by 2, where position value is not 0, return this subset of values (odds). 
+# IMPORTANT TO NOTE: performing a calculation on an R vector performs the action for each element of the vector. 
+
+
+# ------------------- Which function ---------------------------------------------
+z <- c(101:110) # create a list between 101 and 110
+min(z) # find the minimum (101)
+max(z) # find the maximum (110)
+mean(z) # find the mean (sum of elements / length of vector)
+median(z) # find the median
+z <- z[-c(5,6)] # removes the 5th and 6th element with -c syntax
+
+which(z > 105) # returns the places (emphasis) which are greater than 105, i.e. 6, 7, 8, 9 ,10
+z[which(z > 105)] # returns the values (emphasis) which are greater than 105, i,e, 106, 107..., 110
+i <- which(z > 107 | z < 104) # find the elements that are above 107 or below 104 and return boolean T/F values
+z[i] # return the vector subset that meets the i conditional T/F statements. Vector returns TRUE values. 
+z # Z vector is still maintained as subset conditional was stored in a new variable
+
+mb_i <- microbenchmark({which(z > 107 | z < 104)}, times = 10) # which statements can be very fast for conditionals (8.837ms)
+
+# challenge - which function to return values meeting multiple conditions
+i <- which(z %% 2 == 0 | z %% 5 == 0) # return all even numbers and all multiples of 5 from the z vector
+z[i] # As above, use boolean logic to return record which meet the TRUE condition
+z[which(z %% 2 == 0 | z %% 5 == 0)] # Alternative method
+
+
+# -------------------- Vectors continued (data types and transformation handling)--
+vec1 <- 1:10 # numbers 1 to 10
+vec2 <- letters[1:10] # first 10 letter of the alphabet
+vec3 <- factor(1:10) # a factor from 1 to 10 with 10 levels
+
+vec4 <- as.numeric (vec1) # converts integer class to numeric
+vec5 <- as.character(vec1) # converts vec1 integer class to characters '1' to '10'
+
+vec6 <- c(2, "d") # while first value is numeric, characters takes precedence in defining class(vec6)
+vec7 <- c(2, FALSE) # first numeric value takes precedence in defining class(vec7). Bool is 0 or 1. 
+
+# -------------------- Order of importance, 1) Character, 2) Numeric, 3) Logical --
+vec8 <- as.numeric(vec3) # no problem converting factor to numeric
+vec9 <- factor(round(runif(10,10,70))) 
+vec10 <- as.numeric(vec9) # strangely, converting a factor like this returns the number of levels
+
+nlevels(vec9) # vector 9 has 10 levels made up of random uniform numbers
+
+vec11 <- as.numeric(as.character(vec9)) # characters converted back to numeric
+
+vec11 == vec9 # this is TRUE as we went from factors to characters then to numeric
+vec10 == vec9 # this is FALSE as we went from factors to numeric which retains numbers of levels
+
+# challenge - create a factor vector based on random numbers. 
+vec12 <- factor(round(runif(10,0,10)))
+vec13 <- as.numeric(as.character(vec12)) # convert to characters first, then numeric.
+vec13 == vec12 # as above, to modify a factor to a numeric and preserve values.
+
+# ----- Introduction to Lists (vectors can only store one data type, lists can contain multiple data types)
+# list are a useful mechanism to store more complex data types
+vec14 <- 1:3 # numeric data from 1 to 3
+vec15 <- letters[1:3] # the first 3 letters of the alphabet
+vec16 <- factor(1:3) # a factor with 3 levels
+
+lst1 <- list(vec14, vec15, vec16) # groups 3 vectors into a list object
+
+lst1[1] # returns the full first elements or vec1
+lst1[[1]] # returns all components of the first element or equivilent to vec1
+vec14 # check that this is the same as above. 
+
+# so how can we access the second element (a, b, c) and the third component or value? 
+lst1[[2]][3] # returns the third value from the second element in a list or "c"
+names(lst1) <- c("one", "two", "three")
+
+lst1$two[3] # an alternative way to return "c" with the dollar sign ($) syntax
+
+l <- unlist(lst1) # unlist flattens the list into a single vector but preserves the naming convention of each element
+class(l) # characters takes precendence 
+
+# challenge - create a list with 123 and abc and access c using dollar sign notation
+vec17 <- 1:3
+vec18 <- letters[1:3]
+lst2 <- list(vec17, vec18) # common error here, make sure to use the list function, not 'c()'
+names(lst2) <- c("one", "two")
+lst2$two[3] 
+
+# -------------------- Set operations across vectors (overlaps, Venn diagrams etc.) --------------------
+a <- c(1:6)
+b <- c(5:10)
+
+1 %in% a # %in% returns boolean values TRUE and FALSE based on if the value 1 is in vector a
+10 %in% a # checks if value 10 is in vector a and returns FALSE as it is not in this case
+a %in% b # returns a vector of boolean TRUE/FALSE values. Where a is in b it will return TRUE, where a is NOT in b return FALSE
+b %in% a # where b is in a it will return TRUE, where b is NOT in a return FALSE. Values 1 and 2 or 5 and 6 are in both a and b. 
+is.element(a, b) # as above, just a different approach. 
+union(a, b) # returns the combined vectors values in a and b without repeating values
+intersect(a, b) # returns the intersection of vectors a and b or 5 and 6 (overlap in venn diagram)
+setdiff(a, b) # returns the values unique to a but not contained in b
+setdiff(b, a) # returns the values unique to b but not contained in a
+unique(c(a,b)) # returns the values likeunion but works differently. Unknown why? 
+
+# challenge - get the values unique to each vector and store them in a new vector
+a <- 11:15
+b <- 13:17
+
+# approach 1, take set diff and join using c() function in new vector
+a1 <- setdiff(a, b)
+b1 <- setdiff(b, a)
+c <- c(a1, b1) 
+
+# approach 2, use union, intersect and setdiff
+u <- union(a, b) # Join the two vectors in u
+i <- intersect(a, b) # Take the intersect of a and b
+c <- setdiff(u, i) # Return the values that belong uniquely to a and b by taking our the intersect or overlapping values
+
+
+# random sampling - randomly draw items from a list (useful for statistics). With and without replacement. 
+a <- 1:60
+sample(a) # sample of length of vector, in this case 60 samples
+sample(a, replace=T) # this is the same as placing the ball back in and drawing again or replacing
+sample(a, 10, replace=T) # this specifies the number of samples from the vector and the replacement property
+
+b <- sample(a, 10, replace=T) # sample 10 balls from the a bucket with replacement and store in b
+sort(b, decreasing = T) # sort largest to smallest
+rev(sort(b)) # as above, different method
+
+order(b) # returns the places instead of the values
+
+a <- c(1:round(runif(1, min=100, max=150))) # generate a list from 1 to min 100 or max 150 using the runif function
+
+# challange 9 - from 'a' create a 20% sample with replacement then sort in decending order. 
+s <- sample(a, length(a)*0.2, replace=T) # sample a for 20% of the count of elements with replacement
+sort(s, decreasing=T) # sort decreasing
+
+length(s)/length(a) # checks the sample size is the specified 20%
+
+# -------------------IF statement to check conditions - 
+# i.e. variable exceeds a certain limit, else we take an alternative action.
+age <- 13
+
+# if syntax in R - slightly complicated and confusing if coming from C++
+if(age >= 18){
+  print("Can watch the movie")
+} else {
+  print("Cannot watch the movie")
+}
+
+# worth adding that this can be slow (248ms)
+age_mb <- microbenchmark({
+  if(age >= 18){
+    print("Can watch the movie")
+  } else {
+    print("Cannot watch the movie")
+  }
+}, times = 10)
+
+group_age <- round(runif(30,10,40)) #REMINDER on runif - generates a random uniform sample of 30 values from 10 to 40
+group_desc <- list(min(group_age), max(group_age), mean(group_age)) # check the min, max and mean (describe data)
+names(group_desc) <- c("min", "max", "mean") # rename the variables in the group_desc list type
+# what we've done here is generate a group size of 30 people with ages from 10 to 40 randomly from a uniform distribution
+# now we can check who can watch the movie (if they're over 18) and who can't
+
+
 
 
