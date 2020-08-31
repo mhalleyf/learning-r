@@ -295,6 +295,161 @@ for(i in loop){
   print(total)
 }
 
+# use logic in loops - for 1 to 15, if i modulus 2 == 0 (i.e. for even #'s) add total + 1 to total (note total grows with length of loop)
+# returns 2, 4, 6, 8, 10, 12, 14
+for(i in loop){
+  if(i %% 2 == 0){
+    print(i)
+  }
+}
+
+# as total = 1, each loop adds 1 to the total and there are 7 even elements in the range 1 to 15 resulting in 8
+for(i in loop){
+  if(i %% 2 == 0){
+    total <- total + 1
+  }
+}
+
+
+# alternative approach - more efficient only runs 7 iterations
+for(i in seq(2, 15, by=2)){
+  total <- total + 1
+}
+
+# break statement if condition is met
+for(i in seq(2, 15, by=2)){
+  total <- total + 1
+  if(i == 8){
+    break
+  }
+}
+
+# next statement - note positioning of total statement is different than above
+for(i in seq(2, 15, by=2)){
+  if(i == 8){
+    next
+  }
+  total <- total + 1
+}
+
+# challenge - print the 26 letters of the alphabet
+for(i in letters){
+  print(i)
+}
+
+# -------------------- Introduction to dataframes -----------------------------------------
+# first create a bunch of vectors
+a <- c(1, 2, 3, 4, NA)
+b <- c(6, 7, 8, NA, 10)
+c <- c(11, 12, NA, 14, 15)
+d <- c(16, NA, 18, 19, 20)
+e <- c(21, 22, 23, 24, 25)
+
+df <- data.frame(a,b,c,d,e)
+class(df) # returns the class of the object, in this case a Data Frame
+nrow(df) # returns the number of rows
+ncol(df) # returns the number of columns
+stack(df) # stacks all variables on top of each other in a row
+rbind(df, df) # adds the first df to the second df
+cbind(df, df) # adds the variables of the first and second df
+head(df, 3) # returns number of rows you wish to see across all variables (columns)
+tail(df) # returns the last few rows
+str(df) # returns the description of the data frame and the class of each variable. Dollar sign notation available here. 
+summary(df) # returns the descriptive statistics of each column or variable (mean, median, 1st and 2nd quartile etc.)
+
+names(df) <- # returns names of columns
+  colnames(df) <- c("a1", "b1", "c1","d1", "e1") # rename columns
+rownames(df) # returns names of rows or the index column if present
+t <- t(df) # transpose data frame
+class(t) # when transposing, data frame becomes a matrix
+
+# remove rows which contain missing values
+na.omit(df) # Omits all rows with NA records and returns only the row with no NA values across all variables
+df[4, ] # Returns the 4th row and all columns. You can specify the column by placing a 1 or the column name after the variable
+df[4, "c1"] # Returns 14 or the c1 variables 4th row value
+df[c(4, 5), c(2, 3, 4)] # Returns b1, c1 and d1 columns and the 4th and 5th rows
+df$a1 # Returns all elements in column a1
+
+# which function in df 
+which(df$e1 >22) # Returns the indicies of the rows that meet the criteria
+df[which(df$e1 > 22), ] # VERY USEFUL - Returns the rows where the values in e1 are > 22 including the other columns
+df[, which (names(df) %in% c("c1", "d1"))] # Returns all rows for the columns named c1 and d1
+df[, c(3, 4)] # Same as above, returns the 3rd and 4th column
+which(df[, 5] > 22) # Equivilent to line 399 where e1 rows are > 22, returning all columns
+which(df[, 5] > 22) == which(df$e1 >22)
+
+# orders in df
+df[order(-df$e1), ] # Sorts the df by reverse order or column e1 or
+df[rev(order(df$e1)), ] # Alternative method to sort df in reverse order by column e1
+
+# attach and matrix
+# attach(df) # attaches columns to global memory (careful, overides previous variables)
+m <- matrix(1:100, nrow=10)
+
+# check size of data frame vs matrix
+object.size(m)
+object.size(df)
+
+# ggplot2 introduction
+library(ggplot2) # loads library if installed as this is a non-base R package
+p <- ggplot(diamonds)
+p <- ggplot(diamonds, aes(x=carat)) # draws in x axis based on dimension of carat & stores in p.
+p <- ggplot(diamonds, aes(x=carat, y=price)) # draws in y axis based on dimension of price & stores in p.
+p <- ggplot(diamonds, aes(x=carat, y=price, color=cut)) # use a variable to present color categories inside AES
+p <- ggplot(diamonds, aes(x=carat), color="steelblue") # where no variable for color exists, specify outside AES
+
+# The layers of ggplot
+p <- ggplot(diamonds, aes(x=carat, y=price, color=cut)) +
+  geom_point() # adds geometric objects to cartisian plane
+
+head(diamonds) # explore data set first 6 rows across all variables
+
+p <- ggplot(diamonds, aes(x=carat, y = price, color=cut, shape=color)) +
+  geom_point() # adds shape of points based on color of the diamond
+
+# the labels of ggplot - axis.text.x or y and element_text access the text allowing for size argument to be passed
+p <- ggplot(diamonds, aes(x=carat, y = price, color=cut)) +
+  geom_point() + 
+  labs(title="Scatterplot", x="Carat", y="Price") + 
+  theme(plot.title=element_text(size=15, face="bold", hjust=0.5),
+    axis.text.x=element_text(size=5),
+    axis.text.y=element_text(size=5),
+    axis.title.x=element_text(size=10),
+    axis.title.y=element_text(size=10)) +
+  scale_color_discrete(name="Cut of diamonds")
+
+# facet wraps allow you to see multiple plots which is good for categorical elements such as Clarity
+p + facet_wrap( ~ cut, ncol=3) # Columns defined by cut
+cc <- p + facet_wrap(color ~ cut, scales="free") # Columns defined by cut, scales allowed to float (not best practice)
+cc <- p + facet_grid(color ~ cut) # Simplifies viewing when color is involved
+
+ggsave("diamond-values.png", plot=cc) # Saves object cc as png in working directory
+
+library(ggfortify) # ggfortify is ggplot2s engine to autoplot time-series without having to convert objects into a data frame
+library(dslabs) # non 'toy' datasets for more practical learning
+library(tidyverse) # TBC 
+library(ggthemes) # TBC
+library(ggrepel) # TBC
+
+data(package="dslabs") # access the R data sets documentation to explore dataset details
+
+list.files(system.file("script", package = "dslabs")) # returns .R files for datasets
+
+# some examples of different types of plots using ggplot
+data("heights") # load the data
+head(heights) # explore the data
+ht <- heights # replicate the data frame into a newly named data frame call ht
+names(ht) <- c("Sex", "Height(inch)") # rename the column values
+
+ht$heightcm <- ht[,2] * 2.54 
+ht$heightft <- ht[,2] / 12
+names(ht) <- c("sex", "htinch", "htcm", "htft") # rename the column values
+
+# plots using tidyverse pipe operator and ggplot (a different approach from base R)
+ds_theme_set()
+h <- ht %>% 
+  ggplot(aes(htcm, fill=sex)) +
+  geom_density(alpha=0.2) # we can pass the alpha or transparancy value to the geometry function
 
 
 
