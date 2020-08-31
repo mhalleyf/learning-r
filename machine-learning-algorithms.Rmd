@@ -10,9 +10,41 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(class)
+
+data(iris) # load dataset
+str(iris) # inspect structure of dataset
+table(iris$Species) # return factors which contain the species in the dataset
+hear(iris) # return first six rows of dataset
+
+set.seed(9850) # set seed for replicability
+rand_unif <- runif(nrow(iris)) # generate a random uniform set between 0 and 1
+iris_sort <- iris[order(rand_unif),] # sort iris dataset by random
+str(iris_sort) # check structure is maintained
+head(iris_sort) # check observations are mixed up
+
+summary(iris_sort[, c(1, 2, 3, 4)]) # check data descriptives
+
+normalize <- function(x) { # create a function that normalizes values between 0 and 1
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+normalize(c(1, 2, 3, 4, 5)) # check function for valid results using dummy data
+
+iris_norm <- as.data.frame(lapply(iris_sort[, c(1, 2, 3, 4)], normalize)) # run first 4 vars through function using lapply
+summary(iris_norm) # pre-processing check for normalised values
 
 
+iris_train <- iris_norm[1:129, ]
+iris_test <- iris_norm[130:150, ]
+iris_train_levels <- iris_sort[1:129, 5]
+iris_test_levels <- iris_sort[130:150, 5]
 
+sqrt(nrow(iris_norm)) # returns sqrt of nrow of dataset, round to nearest odd to break ties
+
+m_kNN <- knn(train = iris_train, test = iris_test, cl = iris_train_levels, k = 13) # use knn from class library
+
+table(y = iris_test_levels, x = m_kNN) # use a confusion matrix to display misclassification 
 
 
 
