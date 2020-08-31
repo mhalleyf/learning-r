@@ -10,8 +10,42 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r iris}
+# load dependant libraries
+library(class)
 
+# load and explore data
+data(iris)
+str(iris) # return structure of data frame
+table(iris$Species)
+head(iris) # first 6 rows, table looks ordered
 
+set.seed(9850) # set seed to replicate results
+rnd_unif <- runif(nrow(iris)) # generate n rows or random numbers
+iris_sort <- iris[order(rnd_unif),] # shuffle iris dataset by order of rnd_unif
+head(iris_sort) 
+summary(iris_sort[,c(1, 2, 3, 4)]) # explore shape of each variable
+
+normalize <- function(x) { # normalize data as kNN works on distance
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+normalize(c(1, 2, 3, 4, 5)) # validate function
+
+iris_norm <- as.data.frame(lapply(iris_sort[, c(1, 2, 3, 4)], normalize)) # apply function to vars 1 - 4 (numeric features)
+summary(iris_norm) # check function has normalized values from 0 to 1
+str(iris_norm) # 150 observations of 4 variables
+
+iris_train <- iris_norm[1:129, ] # split out first 129 rows
+iris_test <- iris_norm[130:150, ] # split out last 21 rows
+iris_train_target <- iris_sort[1:129, 5] # factors from original data sets
+iris_test_target <- iris_sort[130:150, 5] # factors from original data sets
+
+# implement kNN algorithm to classify flower types
+sqrt(nrow(iris_norm)) # 12.247 but it's nice to have odd number to break ties so round up
+
+m_kNN <- knn(train = iris_train, test = iris_test, cl = iris_train_target, k = 13)
+
+table(iris_test_target, m_kNN)
 
 
 ```
