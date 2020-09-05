@@ -47,7 +47,5 @@ m_kNN <- knn(train = iris_train, test = iris_test, cl = iris_train_levels, k = 1
 table(y = iris_test_levels, x = m_kNN) # use a confusion matrix to display misclassification 
 
 
-
-
 ```
 
