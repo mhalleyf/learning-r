@@ -60,8 +60,27 @@ data$hd <- as.factor(data$hd)
 # Confirm all changes have taken effect on the dataframe
 str(data)
 
+# Quantify the number of rows with NA values 
+nrow(data[is.na(data$ca) | is.na(data$thal),])
+
+# hd and thal had "?" values so we need to retrive all rows with NA values using OR
+data[is.na(data$ca) | is.na(data$thal),]
 
 
+nrow(data) # Returns the number of rows in data frame pre-removal
+
+# Removes the values that are NA
+data <- data[!(is.na(data$ca) | is.na(data$thal)),]
+
+nrow(data) # Returns the number of rows in data frame post-removal
+
+# Check all boolean values to ensure each hd state is balanced in the dataset
+xtabs(~ hd + sex, data=data)
+xtabs(~ hd + cp, data=data)
+xtabs(~ hd + fbs, data=data)
+
+# Only 4 patients have a result at level 1 which could interupt our ability to find the best line
+xtabs(~ hd + restecg, data=data)
 
 
 ```
@@ -70,8 +89,45 @@ str(data)
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+# We then run a generalised linear model with a binomial distribution as this makes it predict using logistic reg.
+logistic <- glm(hd ~sex, data=data, family="binomial")
+
+# Here the model is summarised. Follow up lesson on Deviance Residuals
+summary(logistic)
+
+# We can then run the model across all variables
+logistic <- glm(hd ~ ., data=data, family="binomial")
+summary(logistic)
+
+# Pseudo R2
+ll.null <- logistic$null.deviance/-2
+ll.proposed <- logistic$deviance/-2
+
+(ll.null - ll.proposed) / ll.null
+
+
+1 - pchisq(2*(ll.proposed - ll.null), df=(length(logistic$coefficients)-1))
+
+predicted.data <- data.frame(
+  probability.of.hd=logistic$fitted.values,
+  hd=data$hd)
+
+predicted.data <- predicted.data[
+  order(predicted.data$probability.of.hd, decreasing = FALSE),]
+predicted.data$rank <- 1:nrow(predicted.data)
+
+library(ggplot2)
+
+ggplot(data=predicted.data, aes(x = rank, y = probability.of.hd)) +
+  geom_point(aes(color=hd), alpha=1, shape=4, stroke=2) +
+  xlab("Index") +
+  ylab("Predicted probability of getting heart disease")
+
+ggsave("heart_disease_probabilities.pdf")
+
+
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
