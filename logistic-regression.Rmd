@@ -16,8 +16,54 @@ This is an R Markdown format used for publishing markdown documents to GitHub. W
 
 You can include R code in the document as follows:
 
-```{r cars}
-summary(cars)
+```{r}
+# Store location of dataset into a variable called url
+url <- "http://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
+
+# Extract and store data using read.csv into a variable called data
+data <- read.csv(url, header=FALSE)
+
+# Preview the first six rows of the dataset
+head(data)
+
+# Rename columns according to the data dictionary at the url source
+colnames(data) <- c("age", "sex", "cp", "trestbps", "chol",
+  "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "hd")
+
+# Here we review the structure of the data and assess what needs to be cleaned up to the correct data type
+str(data)
+
+# Remove 0 and 1 numerics and replace with M/F then convert to a factor
+data[data == "?"] <- NA
+data[data$sex == 0,]$sex <- "F"
+data[data$sex == 1,]$sex <- "M"
+data$sex <- as.factor(data$sex)
+
+# Convert all required variables into their factor requirement
+data$cp <- as.factor(data$cp)
+data$fbs <- as.factor(data$fbs)
+data$restecg <- as.factor(data$restecg)
+data$exang <- as.factor(data$exang)
+data$slope <- as.factor(data$slope)
+
+# Convert columns with missing data or "?" that we replaced with NA to ints first then factors
+data$ca <- as.integer(data$ca)
+data$ca <- as.factor(data$ca)
+
+data$thal <- as.integer(data$thal)
+data$thal <- as.factor(data$thal)
+
+# Here we perform a test on the hd variable for 0 and if true, return healthy, else unhealthy
+data$hd <- ifelse(test=data$hd == 0, yes="Healthy", no="Unhealthy")
+data$hd <- as.factor(data$hd)
+
+# Confirm all changes have taken effect on the dataframe
+str(data)
+
+
+
+
+
 ```
 
 ## Including Plots
