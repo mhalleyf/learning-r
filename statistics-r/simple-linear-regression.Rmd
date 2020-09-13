@@ -1,0 +1,135 @@
+---
+title: "simple-linear-regression"
+author: "M.Halley-Frame"
+date: "12/09/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+# Linear regression by hand
+# Create a data frame with variables of correct answers and attitude
+test.data <- data.frame(
+  correct=c(17, 13, 12, 15, 16, 14, 16, 16, 18, 19),
+  attitude=c(94, 73, 59, 80, 93, 85, 66, 79, 77, 91))
+
+# y = a + bx or intercept + coefficient * x
+# slope (b) of regression line b = r (sy / sx)
+# where r is pearsons correlation coefficient
+# y-intercept (a) of regression line a = yhat - b * xhat
+# r = sum ((x-xhat)(y-yhat)) / sqrt((sum(x-xhat)^2) * (sum(y-yhat)^2))
+
+xhat <- sum(test.data$correct) / length(test.data$attitude)
+yhat <- sum(test.data$attitude) / length(test.data$attitude)
+
+
+# x and y variance
+xmxhat <- test.data$correct - xhat
+ymyhat <- test.data$attitude - yhat
+
+# xy variance
+xyvar <- xmxhat * ymyhat
+
+# x and y variance squared
+xmxhatsq <- xmxhat^2
+ymyhatsq <- ymyhat^2
+
+# moderate to strong correlation coefficient
+r <- sum(xyvar)/sqrt(sum(xmxhatsq) * sum(ymyhatsq))
+
+# standard deviation of y is the sum of the squared residuals / n - 1 where n is the number of observations
+sy <- sqrt(sum(ymyhatsq)/(length(test.data$attitude)-1))
+sx <- sqrt(sum(xmxhatsq)/(length(test.data$correct)-1))
+
+# we can now work out the slope or b by using pearsons r and the standard deviations of x and y
+b <- r * (sy / sx)
+
+# we can now work out the y-intercept
+yint <- yhat - b * xhat
+
+# we can now predict the values of y using inputed values of x
+x <- c(10, 20, 30)
+y <- yint + b * x
+
+plot(y)
+
+# now the math is understood, the lm function can do all of this for us
+test.regression <- lm(attitude ~ correct, data=test.data)
+summary(test.regression)
+
+# the r squared in the summary tab is the same as r^2
+r^2
+
+# plot the data set and visualise how well the line fits the model
+plot(test.data$correct, test.data$attitude)
+abline(test.regression, col="blue")
+
+# Create a data frame with variables of weight and size
+mouse.data <- data.frame(
+  weight=c(0.9,1.8, 2.4, 3.5, 3.9, 4.4, 5.1, 5.6, 6.3),
+  size=c(1.4, 2.6, 1.0, 3.7, 5.5, 3.2, 3.0, 4.9, 6.3), 
+  tail = c(0.7, 1.3, 0.7, 2.0, 3.6, 3.0, 2.9, 3.9, 4.0))
+
+plot(mouse.data$weight, mouse.data$size)
+
+# uses least squares method to estimate a line where formula= in lm is size as function of weight
+mouse.regression <- lm(size ~ weight, data = mouse.data)
+
+# Details outputs for model parameters
+# Summary of residuals or distance from the data to the fitted line (symetrical min / max / 1Q / 3Q)
+# Intercepts don't need to be statistically significant
+# The standard error and t value are shown to help calculate p-values
+# Coefficients show that for a 1 unit change in x, y will change by 0.778
+# Residual standard error (square root of the denominator)
+# Multiple R-squared shows weight explains 61% of the change in size
+# F-statistic, degrees of freedom and p-value
+summary(mouse.regression)
+
+plot(mouse.data$weight, mouse.data$size)
+abline(mouse.regression, col="blue")
+
+
+# multiple linear regression - answers whether tail adds value to the prediction
+plot(mouse.data$weight, mouse.data$tail)
+
+# use weight and tail to predict size
+plot(mouse.data)
+
+
+# interpretation of multiple regression
+multiple.regression <- lm(size ~ weight + tail, data=mouse.data)
+summary(multiple.regression)
+
+# in summary, using weight and tail to predict size is good
+# but if we wanted to save time, we could spare ourselves from weighing mice and just use tail to predict size
+
+tail.regression <- lm(size ~ tail, mouse.data)
+summary(tail.regression)
+
+# tails provide a much better prediction of size than weight does. Why is it unethical to remove weight?
+plot(mouse.data$tail, mouse.data$size)
+abline(tail.regression)
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
