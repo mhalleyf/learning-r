@@ -16,7 +16,19 @@ This is an R Markdown format used for publishing markdown documents to GitHub. W
 You can include R code in the document as follows:
 
 ```{r}
+# Data wrangling using tidyverse (50-80% of the effort of a data science project)
+library(tidyverse)
+library(ggplot2)
+library(devtools)
 
+
+# Access to full dataset
+View(diamonds)
+
+# Ability to string functions together on the same variable
+diamonds$x %>%
+  round(2) %>%
+  mean()
 
 
 
