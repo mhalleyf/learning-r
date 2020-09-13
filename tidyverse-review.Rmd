@@ -21,25 +21,34 @@ library(tidyverse)
 library(ggplot2)
 library(devtools)
 
-
-# Access to full dataset
-View(diamonds)
-
-# Ability to string functions together on the same variable
-diamonds$x %>%
-  round(2) %>%
-  mean()
-
-
-
-
 ```
 
 ## Including Plots
 
 You can also embed plots, for example:
 
-```{r, echo=FALSE}
+```{r, echo=TRUE}
+
+# Data visualisation
+# Basic xy plot with vehicle class mapped as color
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+
+# Basic xy plot with no mapping
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = cyl, y = hwy))
+
+# Maps alpha for transparency of points
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+# Maps class of vehicle to shape but be careful, only 6 shapes will plot omitting any other class
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+
+# Makes all points blue
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
 
 
 
