@@ -32,6 +32,8 @@ tail(simtime)
 ``` {r}
 library(microbenchmark)
 library(plotrix)
+library(plotly)
+library(DescTools)
 
 
 # Monte Carlo Simulation
@@ -57,6 +59,33 @@ for (i in 1:throw_dart) {
   points(x[i], y[i], col="blue")
   Sys.sleep(0.2)
 }
+
+f <- function(x) x^2
+curve(f, from = -3, to = 3, xlim = c(-3,3), xaxs="i")
+Shade(f, breaks =c(-3, 3), col="blue")
+grid()
+
+# Estimate area under the graph through simulation rather than integration
+check_points <- runif(n = 1000, min = -3, max = 3)
+6 * mean(f(check_points))
+
+# Run a for loop to visualise how accurate the estimate of the area under the curve is for n iterations
+area_estimates <- vector(length = 10000)
+for(i in 1:10000) {
+  check_points <- runif(n = i, min = -3, max = 3)
+  area_estimates[i] <- 6 * mean(f(check_points))
+}
+plot(area_estimates)
+abline(h = 18, col = "red", lwd = 1)
+
+
+# Use Base R and Plotly for 3D visualisations
+g <- function(x, y) x^2 + y^2
+x <- y <- seq(-3, 3, length = 100)
+z <- outer(x, y, g)
+persp(x, y, z)
+
+plot_ly(x = x, y = y, z = z) %>% add_surface()
 
 
 

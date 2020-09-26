@@ -130,4 +130,46 @@ ggsave("heart_disease_probabilities.pdf")
 
 ```
 
+```{r}
+# Logit regression (UCLA Institute for Digital Research & Education)
+library(aod)
+library(ggplot2)
+
+# Load data from UCLA website
+mydata <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+
+# Inspect data
+head(mydata)
+summary(mydata)
+
+# To get standard deviations, use sapply to apply the sd function to each variable
+sapply(mydata, sd)
+
+# two-way contingency table of categorical outcome and predictors we want
+xtabs(~admit + rank, data=mydata)
+
+# Transform variables to appropriate data types
+mydata$rank <- factor(mydata$rank)
+mylogit <- glm(admit ~ gre + gpa + rank, data = mydata, family = "binomial")
+summary(mylogit)
+
+# For every one unit change in gre, the log odds of admission (versus non-admission) increases by 0.002.
+# For a one unit increase in gpa, the log odds of being admitted to graduate school increases by 0.804.
+
+# The indicator variables for rank have a slightly different interpretation. For example, having attended an undergraduate 
+# institution with rank of 2, versus an institution with a rank of 1, changes the log odds of admission by -0.675.
+
+log_odd_gpa <- log((0.804)/(1-0.804))
+
+confint(mylogit)
+confint.default(mylogit)
+
+wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 4:6)
+
+
+
+
+
+```
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
